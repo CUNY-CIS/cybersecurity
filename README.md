@@ -63,7 +63,6 @@ Full license text: https://www.gnu.org/licenses/gpl-3.0.html
 |------|--------|
 | `0`  | Certificate import and commit completed successfully |
 | `1`  | Import failed, commit failed, or commit did not complete |
-``
 
 ## Version
 
