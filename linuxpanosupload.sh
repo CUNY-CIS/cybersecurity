@@ -54,8 +54,10 @@
 #   CERTPATH               - Path to certificate PEM (can include chain/intermediates: full chain is recommended)
 #   KEYPATH                - Path to private key PEM
 #   PASSPHRASE             - Passphrase for the private key (if encrypted); it cannot be blank, if no passphrase is defined, you can use any generic string
-#   COMMIT_WAIT_INTERVAL   - Interval to wait for a commit
-#   COMMIT_WAIT_ITERATIONS - The number of iterations to wait for a commit
+#
+# ADDITIONAL INPUTS
+#   COMMIT_WAIT_INTERVAL   - Interval to wait for a commit: Set for 30 seconds
+#   COMMIT_WAIT_ITERATIONS - The number of iterations to wait for a commit: Set for 20 iterations
 #
 # SECURITY NOTES
 #   - This script writes a combined PEM to /tmp. Ensure /tmp permissions
