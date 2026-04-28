@@ -36,7 +36,7 @@
 #   2) POST the PEM to PAN-OS API endpoint:
 #        type=import
 #        category=keypair
-#        certificate-name=<DOMAIN>
+#        certificate-name=<CERTNAME>
 #        format=pem
 #        passphrase=<PASSPHRASE>  (if the private key is encrypted. If there is none, you can use any generic string)
 #        target-tpl=<TEMPLATE>    (if importing into a Panorama template)
@@ -46,7 +46,8 @@
 #   5) Remove the temporary combined PEM file
 #
 # REQUIRED INPUTS (CONFIG)
-#   DOMAIN                 - Friendly name to store the certificate as in PAN-OS (e.g., nodename.campus.cuny.edu)
+#   CERTNAME               - Friendly name to store the certificate as in PAN-OS (e.g., nodename.campus.cuny.edu)
+#                            The name is case-sensitive and can have up to 63 characters. Use only letters, numbers, hyphens, and underscores.
 #   FW                     - Base URL/IP of firewall or Panorama (e.g., https://fw.local or https://x.x.x.x)
 #   KEY                    - PAN-OS API key with permissions to import certs & commit
 #   TEMPLATE               - Panorama template name
@@ -71,7 +72,7 @@
 ###############################################################################
 
 
-DOMAIN="DOMAIN_OF_CERT"
+CERTNAME="NAME_OF_CERT"
 FW="URL_OF_FIREWALL"
 KEY="API_KEY_FOR_FIREWALL"
 TEMPLATE="PANOS_TEMPLATE_NAME"
@@ -84,12 +85,12 @@ COMMIT_WAIT_ITERATIONS=20       # query commit status 20 times (20*30 = 600 seco
 
 cat $CERTPATH \
     $KEYPATH \
-    > /tmp/$DOMAIN.pem
+    > /tmp/$CERTNAME.pem
 
 # Perform import and capture API response for certificate import
 RESPONSE=$(curl --insecure -X POST \
-  -F "file=@/tmp/$DOMAIN.pem" \
-  "$FW/api/?type=import&category=keypair&certificate-name=$DOMAIN&format=pem&passphrase=$PASSPHRASE&target-tpl=$TEMPLATE&key=$KEY")
+  -F "file=@/tmp/$CERTNAME.pem" \
+  "$FW/api/?type=import&category=keypair&certificate-name=$CERTNAME&format=pem&passphrase=$PASSPHRASE&target-tpl=$TEMPLATE&key=$KEY")
 
 echo "Import response: $RESPONSE"
 
@@ -133,7 +134,7 @@ if [[ "$RESPONSE" == *"Successfully imported"* ]]; then
 
     # Commit to Stack
     curl -k "$FW/api/?type=commit&cmd=<commit-all><template-stack><name>$TEMPLATE_STACK</name></template-stack></commit-all>&action=all&key=$KEY"
-    rm /tmp/$DOMAIN.pem
+    rm /tmp/$CERTNAME.pem
   else
     echo "❌ Commit failed"
     echo "$JOB_RESPONSE"
